@@ -1,0 +1,18 @@
+{% extends 'qna/layout.html' %}
+
+{% block content %}
+    <h1>There was an error with your form submission</h1>
+
+    {% if errors %}
+        <ul class="alert alert-danger">
+            {% for field, error in errors.items %}
+                <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No errors found.</p>
+    {% endif %}
+
+    <br>
+    <a href="{% url 'create_issue' %}" class="btn btn-primary">Go Back and Fix Errors</a>
+{% endblock %}

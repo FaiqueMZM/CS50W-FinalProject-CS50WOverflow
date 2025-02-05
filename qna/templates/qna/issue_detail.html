@@ -1,0 +1,74 @@
+{% extends 'qna/layout.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="mt-3">
+        <h1>{{ issue.title }}</h1>
+        <p>{{ issue.description }}</p>
+        <p><strong>Created by:</strong> <a href="{% url 'profile' issue.author.username %}">{{ issue.author.username }}</a> on {{ issue.created_at }}</p>
+        
+        {% if issue.author == user and not issue.is_solved %}
+            <form action="{% url 'close_issue' issue.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger mb-3">Close Issue</button>
+            </form>
+        {% endif %}
+
+        {% if not issue.is_solved %}
+            <h3>Your Answer</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group mt-3">
+                    <textarea class="form-control" id="content" name="content" rows="4" required>{{ request.POST.content }}</textarea>
+                    {% if errors.content %}
+                        <div class="alert alert-danger">
+                            <p>{{ errors.content }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary my-3">Post Your Answer</button>
+            </form>
+        {% else %}
+            <p>This issue has been solved and is now closed.</p>
+        {% endif %}
+
+        <h3>Replies</h3>
+        {% for reply in replies %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p class="card-text">{{ reply.content|linebreaks }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-0"><strong>Replied by:</strong> 
+                                <a href="{% url 'profile' reply.author.username %}">{{ reply.author.username }}</a>
+                            </p>
+                            <p class="mb-0 text-muted upvotes">Upvotes: {{ reply.upvotes }}</p>
+                            <p class="mb-0 text-muted downvotes">Downvotes: {{ reply.downvotes }}</p>
+                        </div>
+                        <div>
+                            <a href="{% url 'vote' reply.id 'up' %}" class="btn btn-success btn-sm vote-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
+                                </svg>
+                            </a>
+                            <a href="{% url 'vote' reply.id 'down' %}" class="btn btn-danger btn-sm vote-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No replies yet. Be the first to respond!</p>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'qna/scripts.js' %}"></script>
+{% endblock %}

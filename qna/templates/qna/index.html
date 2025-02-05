@@ -1,0 +1,61 @@
+{% extends 'qna/layout.html' %}
+
+{% block content %}
+
+    <div class="my-3">
+        <form method="GET" action="{% url 'index' %}" class="mb-4">
+            <div class="row g-2">
+                <div class="col-md-7">
+                    <input type="text" name="q" class="form-control" placeholder="Search issues by title..." value="{{ request.GET.q }}">
+                </div>
+                <div class="col-md-3">
+                    <select name="tag" class="form-select">
+                        <option value="">All Tags</option>
+                        <option value="Project0 Search" {% if request.GET.tag == "Project0 Search" %}selected{% endif %}>Search</option>
+                        <option value="Project1 Wiki" {% if request.GET.tag == "Project1 Wiki" %}selected{% endif %}>Wiki</option>
+                        <option value="Project2 Commerce" {% if request.GET.tag == "Project2 Commerce" %}selected{% endif %}>Commerce</option>
+                        <option value="Project4 Mail" {% if request.GET.tag == "Project4 Mail" %}selected{% endif %}>Mail</option>
+                        <option value="Project5 Network" {% if request.GET.tag == "Project5 Network" %}selected{% endif %}>Network</option>
+                        <option value="Final Project" {% if request.GET.tag == "Final Project" %}selected{% endif %}>Capstone</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-outline-primary w-100">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if user.is_authenticated %}
+    <h1>Welcome back, {{ user.first_name }} {{ user.last_name }}</h1>
+    {% else %}
+    <h1>Welcome</h1>
+    {% endif %}
+    <h6>Find answers to your technical questions regarding CS50w and help others answer theirs.</h6>
+    <a href="{% url 'create_issue' %}" class="btn btn-primary mb-4">Ask a Question</a>
+
+    <div class="container">
+        <div class="row">
+            {% for issue in issues %}
+            <div class="mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ issue.title }}</h5>
+                        <p class="card-text">{{ issue.description|slice:":180" }}...</p>
+                        <p class="card-text"><strong>Tag:</strong> {{ issue.tags }}</p>
+
+                        {% if issue.is_solved %}
+                            <a href="{% url 'issue_detail' issue.id %}" class="btn btn-success">Issue Solved</a>
+                        {% else %}
+                            <a href="{% url 'issue_detail' issue.id %}" class="btn btn-secondary">View Issue</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>No issues found matching your search.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}
