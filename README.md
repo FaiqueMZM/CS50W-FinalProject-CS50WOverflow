@@ -48,12 +48,12 @@ To run this project locally, follow these steps:
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/me50/FaiqueMZM.git
-   cd stackoverflow-clone
+   cd [Project Directory]
    ```
 
 2. **Create a Virtual Environment**:
    ```bash
-   python -m venv venv
+   python -m venv venv (if any errors, try python3 -m venv venv)
    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
    ```
 
